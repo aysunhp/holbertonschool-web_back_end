@@ -5,8 +5,8 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
-@app.route("/")
 
+@app.route("/")
 def hello_world():
-   """Route that returns a template"""
-   return render_template('0-index.html')
+    """Route that returns a template"""
+    return render_template('0-index.html')
