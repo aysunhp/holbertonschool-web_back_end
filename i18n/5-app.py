@@ -43,6 +43,10 @@ def get_user(login_as):
 
 @app.before_request
 def before_request():
+    """
+    Finds a user if login_as exists in the request and assigns it
+    to flask.g.user for global access during the request lifecycle.
+    """
     login_as = request.args.get("login_as", type=int)
     g.user = get_user(login_as)
 
