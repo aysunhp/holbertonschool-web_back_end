@@ -43,11 +43,12 @@ def get_user(login_as):
 
 @app.before_request
 def before_request():
-    """
-    Set global user
-    """
     login_as = request.args.get("login_as", type=int)
     g.user = get_user(login_as)
+
+    # DEBUG
+    print("LOGIN_AS:", login_as)
+    print("USER:", g.user)
 
 
 def get_locale():
