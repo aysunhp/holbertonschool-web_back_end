@@ -1,30 +1,21 @@
 #!/usr/bin/env python3
 """
-Flask app with user locale priority and Babel support.
+This module is for Babel object instantiation
 """
 
 from flask import Flask, request, render_template, g
 from flask_babel import Babel
 
 
-app = Flask(__name__)
-
-
 class Config:
     """
-    Configures available languages and default locale/timezone.
+    Configuration class for supported languages
     """
     LANGUAGES = ["en", "fr"]
     BABEL_DEFAULT_LOCALE = "en"
     BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
-app.config.from_object(Config)
-
-babel = Babel(app)
-
-
-# Mock users
 users = {
     1: {"name": "Balou", "locale": "fr", "timezone": "Europe/Paris"},
     2: {"name": "Beyonce", "locale": "en", "timezone": "US/Central"},
@@ -33,49 +24,59 @@ users = {
 }
 
 
-def get_user(login_as: int) -> dict | None:
+def get_user(login_as):
     """
-    Returns a user dictionary based on login_as ID or None if not found.
+    Returns a user dictionary or None if the ID cannot be found.
     """
     if login_as is None:
         return None
     return users.get(login_as)
 
 
-@app.before_request
-def before_request() -> None:
+app = Flask(__name__)
+app.config.from_object(Config)
+babel = Babel(app, locale_selector=lambda: get_locale())
+
+
+def get_locale():
     """
-    Retrieves a user from the request and stores it in flask.g.user.
+    Determines the best language to use in this order:
+    1. URL parameter 'locale'
+    2. User's preferred locale
+    3. Browser's Accept-Language
+    4. Default locale
+    """
+    # 1. URL parameter
+    locale_param = request.args.get("locale")
+    if locale_param in app.config["LANGUAGES"]:
+        return locale_param
+
+    # 2. Logged-in user's locale
+    if g.get("user") and g.user.get("locale") in app.config["LANGUAGES"]:
+        return g.user["locale"]
+
+    # 3. Browser header
+    browser_locale = request.accept_languages.best_match(
+        app.config["LANGUAGES"]
+    )
+    if browser_locale:
+        return browser_locale
+
+    # 4. Default
+    return app.config["BABEL_DEFAULT_LOCALE"]
+
+
+@app.before_request
+def before_request():
+    """
+    Sets g.user before each request.
     """
     login_as = request.args.get("login_as", type=int)
     g.user = get_user(login_as)
 
 
-def get_locale() -> str:
-    """
-    Determines the best locale based on:
-    1. URL parameter
-    2. User preferred locale
-    3. Request headers
-    4. Default locale
-    """
-    locale = request.args.get("locale")
-    if locale in app.config["LANGUAGES"]:
-        return locale
-
-    if g.user:
-        user_locale = g.user.get("locale")
-        if user_locale in app.config["LANGUAGES"]:
-            return user_locale
-
-    return request.accept_languages.best_match(app.config["LANGUAGES"])
-
-
-babel.init_app(app, locale_selector=get_locale)
-
-
 @app.route("/")
-def home() -> str:
+def home():
     """
     Renders the home page template.
     """
@@ -83,4 +84,4 @@ def home() -> str:
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
