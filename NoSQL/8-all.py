@@ -16,4 +16,8 @@ def list_all(mongo_collection) -> list:
     for document in mongo_collection.find():
         documents.append(document)
 
+<<<<<<< HEAD
     return documents
+=======
+    return documents
+>>>>>>> d85190c55f486235c3b2dc1887cede9ba7ee4e1c

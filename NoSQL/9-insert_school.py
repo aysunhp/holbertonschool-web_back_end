@@ -15,4 +15,8 @@ def insert_school(mongo_collection, **kwargs):
     """
     new_school = mongo_collection.insert_one(kwargs)
 
+<<<<<<< HEAD
     return (new_school.inserted_id)
+=======
+    return (new_school.inserted_id)
+>>>>>>> d85190c55f486235c3b2dc1887cede9ba7ee4e1c

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,5 +16,23 @@
     {% endif %}
 
     <p>Current timezone: {{ timezone }}</p>
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ gettext('home_title') }}</title>
+</head>
+<body>
+
+    <h1>{{ gettext('home_header') }}</h1>
+
+    {% if g.user %}
+        <p>{{ gettext('logged_in_as', username=g.user.name) }}</p>
+    {% else %}
+        <p>{{ gettext('not_logged_in') }}</p>
+    {% endif %}
+
+>>>>>>> d85190c55f486235c3b2dc1887cede9ba7ee4e1c
 </body>
 </html>

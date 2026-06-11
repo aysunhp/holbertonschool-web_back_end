@@ -11,4 +11,8 @@ if __name__ == "__main__":
 
     schools = list_all(school_collection)
     for school in schools:
+<<<<<<< HEAD
         print("[{}] {} {}".format(school.get('_id'), school.get('name'), school.get('address', "")))
+=======
+        print("[{}] {} {}".format(school.get('_id'), school.get('name'), school.get('address', "")))
+>>>>>>> d85190c55f486235c3b2dc1887cede9ba7ee4e1c

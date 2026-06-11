@@ -19,4 +19,8 @@ def schools_by_topic(mongo_collection, topic: str):
     for school in mongo_collection.find(query):
         schools.append(school)
 
+<<<<<<< HEAD
     return schools
+=======
+    return schools
+>>>>>>> d85190c55f486235c3b2dc1887cede9ba7ee4e1c

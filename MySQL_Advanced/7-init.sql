@@ -42,4 +42,8 @@ INSERT INTO corrections (user_id, project_id, score) VALUES (@user_bob, @project
 INSERT INTO corrections (user_id, project_id, score) VALUES (@user_bob, @project_py, 96);
 
 INSERT INTO corrections (user_id, project_id, score) VALUES (@user_jeanne, @project_c, 91);
+<<<<<<< HEAD
 INSERT INTO corrections (user_id, project_id, score) VALUES (@user_jeanne, @project_py, 73);
+=======
+INSERT INTO corrections (user_id, project_id, score) VALUES (@user_jeanne, @project_py, 73);
+>>>>>>> d85190c55f486235c3b2dc1887cede9ba7ee4e1c
