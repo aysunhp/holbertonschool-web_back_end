@@ -1,54 +1,51 @@
 const http = require('http');
 const fs = require('fs');
 
-function getStudentsReport(path) {
-  return fs.promises.readFile(path, 'utf8')
-    .then((data) => {
-      const rows = data.split('\n').filter((line) => line.trim() !== '');
-      const students = rows.slice(1);
-      const byField = {};
-
-      students.forEach((student) => {
-        const [firstname, , , field] = student.split(',');
-        if (!byField[field]) {
-          byField[field] = [];
-        }
-        byField[field].push(firstname);
-      });
-
-      const lines = [`Number of students: ${students.length}`];
-      Object.keys(byField).forEach((field) => {
-        lines.push(`Number of students in ${field}: ${byField[field].length}. List: ${byField[field].join(', ')}`);
-      });
-      return lines.join('\n');
-    })
-    .catch(() => {
-      throw new Error('Cannot load the database');
-    });
-}
-
 const app = http.createServer((req, res) => {
-  res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
 
   if (req.url === '/') {
+    res.statusCode = 200;
     res.end('Hello Holberton School!');
-    return;
-  }
+  } else if (req.url === '/students') {
+    const database = process.argv[2];
 
-  if (req.url === '/students') {
-    const dbPath = process.argv[2];
-    getStudentsReport(dbPath)
-      .then((report) => {
-        res.end(`This is the list of our students\n${report}`);
+    res.write('This is the list of our students\n');
+
+    fs.promises.readFile(database, 'utf8')
+      .then((data) => {
+        const rows = data.split('\n').filter((line) => line.trim() !== '');
+        const students = rows.slice(1);
+        const byField = {};
+
+        students.forEach((student) => {
+          const [firstname, , , field] = student.split(',');
+          if (!byField[field]) {
+            byField[field] = [];
+          }
+          byField[field].push(firstname);
+        });
+
+        let output = `Number of students: ${students.length}\n`;
+
+        Object.keys(byField).forEach((field, index, array) => {
+          output += `Number of students in ${field}: ${byField[field].length}. List: ${byField[field].join(', ')}`;
+          if (index < array.length - 1) {
+            output += '\n';
+          }
+        });
+
+        res.statusCode = 200;
+        res.end(output);
       })
-      .catch((error) => {
-        res.end(`This is the list of our students\n${error.message}`);
+      .catch(() => {
+        res.statusCode = 200;
+        res.end('Cannot load the database');
       });
-    return;
+  } else {
+    res.statusCode = 404;
+    res.end('Not Found');
   }
-
-  res.end('Hello Holberton School!');
 });
 
 app.listen(1245);
